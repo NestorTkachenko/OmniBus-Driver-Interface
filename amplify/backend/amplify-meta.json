@@ -1,0 +1,53 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "mniusriverpp-20181110192707-authRole",
+			"UnauthRoleArn": "arn:aws:iam::548414299030:role/mniusriverpp-20181110192707-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::548414299030:role/mniusriverpp-20181110192707-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "mniusriverpp-20181110192707-deployment",
+			"UnauthRoleName": "mniusriverpp-20181110192707-unauthRole",
+			"StackName": "mniusriverpp-20181110192707",
+			"StackId": "arn:aws:cloudformation:us-east-1:548414299030:stack/mniusriverpp-20181110192707/85441e00-e548-11e8-96c2-50fae98a2435"
+		}
+	},
+	"auth": {
+		"cognito1f296004": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/mniusriverpp-20181110192707-deployment/amplify-cfn-templates/auth/cognito1f296004-cloudformation-template.yml",
+				"logicalId": "authcognito1f296004"
+			},
+			"lastPushTimeStamp": "2018-11-11T00:42:24.096Z",
+			"output": {
+				"AppClientSecret": "nqmlttvoq5is7ou7slkuav6h3da7k1qpr1njuaabd1jonvoq5ho",
+				"UserPoolId": "us-east-1_9tsa2Oyjj",
+				"AppClientIDWeb": "3ldfbpq03grng4j1v0rlna6sea",
+				"AppClientID": "5hrdqh80ekhaudngia17a8dh7l",
+				"IdentityPoolId": "us-east-1:dc7e15d1-c5d8-40f0-b1f8-9152b953899a",
+				"IdentityPoolName": "cognito1f296004_identitypool_1f296004",
+				"UserPoolName": "cognito1f296004_userpool_1f296004"
+			},
+			"lastPushDirHash": "3HtO1IgbqWYMcR4a5WFSl9vZ89M="
+		}
+	},
+	"api": {
+		"omnibus": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "API_KEY",
+				"GraphQLAPIIdOutput": "tciq5zfcfbd73g3ozj7nujcz24",
+				"GraphQLAPIEndpointOutput": "https://3dlpkppivrarnftotsmh3ednga.appsync-api.us-east-1.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-wlrsvqfaengd3onixqevqqmipe"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/mniusriverpp-20181110192707-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apiomnibus"
+			},
+			"lastPushTimeStamp": "2018-11-11T00:42:26.928Z",
+			"lastPushDirHash": "H3CcldhOqAr2Tuy2Bp0lTW6r9AY="
+		}
+	}
+}

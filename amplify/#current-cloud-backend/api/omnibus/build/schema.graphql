@@ -1,0 +1,120 @@
+type DataType {
+  id: ID!
+  title: String!
+  content: String!
+  price: Int
+  rating: Float
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelDataTypeConnection {
+  items: [DataType]
+  nextToken: String
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelDataTypeFilterInput {
+  id: ModelIDFilterInput
+  title: ModelStringFilterInput
+  content: ModelStringFilterInput
+  price: ModelIntFilterInput
+  rating: ModelFloatFilterInput
+  and: [ModelDataTypeFilterInput]
+  or: [ModelDataTypeFilterInput]
+  not: ModelDataTypeFilterInput
+}
+
+type Query {
+  getDataType(id: ID!): DataType
+  listDataTypes(filter: ModelDataTypeFilterInput, limit: Int, nextToken: String): ModelDataTypeConnection
+}
+
+input CreateDataTypeInput {
+  id: ID
+  title: String!
+  content: String!
+  price: Int
+  rating: Float
+}
+
+input UpdateDataTypeInput {
+  id: ID!
+  title: String
+  content: String
+  price: Int
+  rating: Float
+}
+
+input DeleteDataTypeInput {
+  id: ID
+}
+
+type Mutation {
+  createDataType(input: CreateDataTypeInput!): DataType
+  updateDataType(input: UpdateDataTypeInput!): DataType
+  deleteDataType(input: DeleteDataTypeInput!): DataType
+}
+
+type Subscription {
+  onCreateDataType: DataType @aws_subscribe(mutations: ["createDataType"])
+  onUpdateDataType: DataType @aws_subscribe(mutations: ["updateDataType"])
+  onDeleteDataType: DataType @aws_subscribe(mutations: ["deleteDataType"])
+}

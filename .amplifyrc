@@ -1,0 +1,14 @@
+{
+    "providers": {
+        "awscloudformation": {
+            "AuthRoleName": "mniusriverpp-20181110192707-authRole",
+            "UnauthRoleArn": "arn:aws:iam::548414299030:role/mniusriverpp-20181110192707-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::548414299030:role/mniusriverpp-20181110192707-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "mniusriverpp-20181110192707-deployment",
+            "UnauthRoleName": "mniusriverpp-20181110192707-unauthRole",
+            "StackName": "mniusriverpp-20181110192707",
+            "StackId": "arn:aws:cloudformation:us-east-1:548414299030:stack/mniusriverpp-20181110192707/85441e00-e548-11e8-96c2-50fae98a2435"
+        }
+    }
+}
