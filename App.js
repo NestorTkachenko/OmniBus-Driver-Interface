@@ -19,7 +19,7 @@ const myAppConfig =  {
     "aws_appsync_graphqlEndpoint": "https://wg23kdqp4nhurdv4fwz5eetgri.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_appsync_region": "us-east-1",
     "aws_appsync_authenticationType": "API_KEY",
-    "aws_appsync_apiKey": "da2-un637qswybgp5ajwbttxgskstm"
+    "aws_appsync_apiKey": "da2-ha3r74srvvfflnqtsdvtm357ke"
 };
 Amplify.configure(myAppConfig);
 
