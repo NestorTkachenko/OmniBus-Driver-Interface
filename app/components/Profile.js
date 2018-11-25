@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, } from 'react-native';
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, ScrollView} from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import {API, graphqlOperation} from 'aws-amplify';
 import * as mutations from '../../src/graphql/mutations';
+import { Constants, MapView, Location, Permissions } from 'expo';
 
 
 const query = `
@@ -24,29 +25,52 @@ export default class Profile extends React.Component {
     this.state = {
       users: [],
       newUser: '',
+      location: { coords: {latitude: 0, longitude: 0}},
       }
     }
 
   async componentDidMount() {
+    Location.watchPositionAsync({distanceInterval: 0, enableHighAccuracy: true}, this.locationChanged);
     const data = await API.graphql(graphqlOperation(query))
     this.setState({
-      users: data.data.listUsers.items
-    })
+      users: data.data.listUsers.items,
+    });
+    this.interval = setInterval(this.editUser, 1000);
   }
 
+  locationChanged = (location) => {
+    region = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.05,
+    },
+    this.setState({location, region});
+  }
+
+  componentWillUnmount() {
+            clearInterval(this.interval);
+          }
+
+
   render() {
+    const { navigation } = this.props;
+    const name = navigation.getParam('name', '');
+
+    // Need to fix this
+    if (name != this.state.newUser) {
+      this.setState({newUser: name})
+    }
+
     return (
 
         <View style = {styles.container}>
+        <ScrollView style = {{width: "100%" }} showsVerticalScrollIndicator={false}>
 
-          <Text style = {styles.header}>Member Page {"\n"}</Text>
+          <Text style = {styles.header}>Member Page</Text>
 
-          <TextInput 
-            style = {styles.textInput} 
-            placeholder = 'User Name' 
-            onChangeText = { (newUser) => this.setState({newUser})}
-            underlineColorAndroid = 'transparent'  
-          />
+          <Text style = {styles.header}> Location: {JSON.stringify(this.state.location.coords.longitude)}, {JSON.stringify(this.state.location.coords.latitude  )}</Text>
+          <Text style = {styles.header}> Name: {JSON.stringify(name)}</Text>
 
           <TouchableOpacity
             style = {styles.button}
@@ -54,26 +78,29 @@ export default class Profile extends React.Component {
             <Text>Remove User</Text>
           </TouchableOpacity>
 
-          <Text style = {styles.header}>Member Page {"\n"}</Text>
-
           <TouchableOpacity
             style = {styles.button}
-            onPress = {this.addUser}>
-            <Text>New User</Text>
+            onPress = {this.editUser}>
+            <Text>Edit User</Text>
           </TouchableOpacity>
 
           {
             this.state.users.map((user, index) => (
-              <Text style = {styles.header} key = {index}>{user.name}</Text>
+              <Text style = {styles.header} key = {index}>{user.name} {user.location}</Text>
               ))
           }
+          <TouchableOpacity
+            style = {styles.button}
+            onPress = { this.addUser }>
+            <Text>Start Route</Text>
+          </TouchableOpacity>
 
-           <TouchableOpacity
+          <TouchableOpacity
             style = {styles.button}
             onPress = {this.logout.bind(this)}>
             <Text>Log Out</Text>
           </TouchableOpacity>
-
+        </ScrollView>
         </View>
 
     );
@@ -85,7 +112,7 @@ export default class Profile extends React.Component {
 
 
   addUser = async () => {
-      const newTodo = await API.graphql(graphqlOperation(mutations.createUser, {input: {name: this.state.newUser, location: 'coords here'}}));
+      const newTodo = await API.graphql(graphqlOperation(mutations.createUser, {input: {name: this.state.newUser, location: this.state.location.coords}}));
       const data = await API.graphql(graphqlOperation(query))
       this.setState({
         users: data.data.listUsers.items
@@ -96,6 +123,19 @@ export default class Profile extends React.Component {
       for(var i = 0; i < this.state.users.length; i++) {
         if(this.state.users[i].name == this.state.newUser) {
           await API.graphql(graphqlOperation(mutations.deleteUser, {input: {id: this.state.users[i].id}}));
+        }
+      }
+
+      const data = await API.graphql(graphqlOperation(query))
+      this.setState({
+        users: data.data.listUsers.items
+      })
+  };
+
+  editUser = async () => {
+      for(var i = 0; i < this.state.users.length; i++) {
+        if(this.state.users[i].name == this.state.newUser) {
+          await API.graphql(graphqlOperation(mutations.updateUser, {input: {id: this.state.users[i].id, location: this.state.location.coords}}));
         }
       }
 

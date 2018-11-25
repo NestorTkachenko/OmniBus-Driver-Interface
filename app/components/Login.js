@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, ScrollView} from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Auth } from 'aws-amplify';
 
 export default class Login extends React.Component {
@@ -10,6 +10,7 @@ export default class Login extends React.Component {
     this.state = {
       username: '',
       password: '',
+      name: '',
       email: '',
       phone_number: '',
       confirmation_code: '',
@@ -34,6 +35,8 @@ export default class Login extends React.Component {
   
 
   render() {
+    const { navigate } = this.props.navigation;
+
     return (
       <KeyboardAvoidingView behavior = 'padding' style = {styles.wrapper}>
         <View style = {styles.container}>
@@ -44,6 +47,13 @@ export default class Login extends React.Component {
             style = {styles.textInput} 
             placeholder = 'username' 
             onChangeText = { (username) => this.setState({username})}
+            underlineColorAndroid = 'transparent'  
+          />
+
+          <TextInput 
+            style = {styles.textInput} 
+            placeholder = 'name' 
+            onChangeText = { (name) => this.setState({name})}
             underlineColorAndroid = 'transparent'  
           />
 
@@ -105,6 +115,7 @@ export default class Login extends React.Component {
         password: this.state.password,
         attributes: {
           email: this.state.email,
+          name: this.state.name
           //phone_number: this.state.phone_number
         }
         //validationData: []  //optional
@@ -125,7 +136,8 @@ export default class Login extends React.Component {
   login() {
     Auth.signIn(this.state.username, this.state.password)
     .then(user => {
-      this.props.navigation.navigate('Profile');
+      console.log(user.signInUserSession.idToken.payload.name);
+      this.props.navigation.navigate('Profile', {name: user.signInUserSession.idToken.payload.name});
     })
     .catch(err => console.log('error signing in!: ', err))
   }
