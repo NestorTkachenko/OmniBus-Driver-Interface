@@ -25,7 +25,7 @@ export default class Profile extends React.Component {
     this.state = {
       users: [],
       newUser: '',
-      location: { coords: {latitude: 0, longitude: 0}},
+      location: {latitude: 0, longitude: 0},
       }
     }
 
@@ -41,11 +41,9 @@ export default class Profile extends React.Component {
   locationChanged = (location) => {
     region = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.05,
+      longitude: location.coords.longitude
     },
-    this.setState({location, region});
+    this.setState({location: region, region});
   }
 
   componentWillUnmount() {
@@ -69,7 +67,7 @@ export default class Profile extends React.Component {
 
           <Text style = {styles.header}>Member Page</Text>
 
-          <Text style = {styles.header}> Location: {JSON.stringify(this.state.location.coords.longitude)}, {JSON.stringify(this.state.location.coords.latitude  )}</Text>
+          <Text style = {styles.header}> Location: {JSON.stringify(this.state.location.longitude)}, {JSON.stringify(this.state.location.latitude)}</Text>
           <Text style = {styles.header}> Name: {JSON.stringify(name)}</Text>
 
           <TouchableOpacity
@@ -112,7 +110,7 @@ export default class Profile extends React.Component {
 
 
   addUser = async () => {
-      const newTodo = await API.graphql(graphqlOperation(mutations.createUser, {input: {name: this.state.newUser, location: this.state.location.coords}}));
+      const newTodo = await API.graphql(graphqlOperation(mutations.createUser, {input: {name: this.state.newUser, location: JSON.stringify(this.state.location)}}));
       const data = await API.graphql(graphqlOperation(query))
       this.setState({
         users: data.data.listUsers.items
@@ -135,7 +133,7 @@ export default class Profile extends React.Component {
   editUser = async () => {
       for(var i = 0; i < this.state.users.length; i++) {
         if(this.state.users[i].name == this.state.newUser) {
-          await API.graphql(graphqlOperation(mutations.updateUser, {input: {id: this.state.users[i].id, location: this.state.location.coords}}));
+          await API.graphql(graphqlOperation(mutations.updateUser, {input: {id: this.state.users[i].id, location: JSON.stringify(this.state.location)}}));
         }
       }
 
