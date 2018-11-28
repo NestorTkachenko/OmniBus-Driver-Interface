@@ -36,6 +36,12 @@ export default class Profile extends React.Component {
       users: data.data.listUsers.items,
     });
     this.interval = setInterval(this.editUser, 1000);
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
   }
 
   locationChanged = (location) => {
