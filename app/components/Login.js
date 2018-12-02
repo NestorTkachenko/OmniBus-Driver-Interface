@@ -1,7 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, ScrollView, Picker} from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Auth } from 'aws-amplify';
+import {API, graphqlOperation} from 'aws-amplify';
+
+import * as queries from '../../src/graphql/queries';
+
+var stops = [];
+var areas = [];
 
 export default class Login extends React.Component {
 
@@ -15,12 +21,25 @@ export default class Login extends React.Component {
       phone_number: '',
       confirmation_code: '',
       user: {},
+      area: '',
+      arealist: [],
 
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    stopdata = await API.graphql(graphqlOperation(queries.listRouteData));
+    stops = stopdata.data.listRouteData.items;
+    stops.filter(function(item){
+      var i = areas.findIndex(x => x == item.area);
+      if(i <= -1){
+            areas.push(item.area);
+      }
+      return null;
+    });
+    this.setState({arealist: areas});
     this._loadInitialState().done();
+    
   }
 
   _loadInitialState = async () => {
@@ -85,6 +104,22 @@ export default class Login extends React.Component {
             underlineColorAndroid = 'transparent'  
           />
 
+          <Picker
+                selectedValue={this.state.area}
+                style={styles.picker}
+                onValueChange={(itemValue, itemIndex) => {
+                  this.setState({area: itemValue})
+                  }
+                }
+                >
+                <Picker.Item label="Choose Area" value= {null} />
+                {this.state.arealist ?
+                this.state.arealist.map((area, index) => (
+                  <Picker.Item label= {area} value= {area} key = {index}/>
+                  )) : null
+                }
+          </Picker>
+
           <TouchableOpacity
             style = {styles.button}
             onPress = {this.signup.bind(this)}>
@@ -115,7 +150,8 @@ export default class Login extends React.Component {
         password: this.state.password,
         attributes: {
           email: this.state.email,
-          name: this.state.name
+          name: this.state.name,
+          zoneinfo: this.state.area,
           //phone_number: this.state.phone_number
         }
         //validationData: []  //optional
@@ -136,8 +172,10 @@ export default class Login extends React.Component {
   login() {
     Auth.signIn(this.state.username, this.state.password)
     .then(user => {
-      console.log(user.signInUserSession.idToken.payload.name);
+      console.log(user.signInUserSession.idToken.payload);
       this.props.navigation.navigate('Profile', {name: user.signInUserSession.idToken.payload.name});
+      this.props.navigation.navigate('Profile', {username: this.state.username});
+      this.props.navigation.navigate('Profile', {area: user.signInUserSession.idToken.payload.zoneinfo});
     })
     .catch(err => console.log('error signing in!: ', err))
   }
